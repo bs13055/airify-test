@@ -1,0 +1,29 @@
+# Airify API Dockerfile.
+# Does NOT require real API keys. Runs in mock mode by default.
+# No external provider calls are made.
+# Build context = airify_all_code/ (see docker-compose.yml / docker-compose.local.yml).
+
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install dependencies. The API package lives in apps/api, and it also imports
+# the local core engine package from packages/core_engine.
+COPY packages/core_engine/pyproject.toml packages/core_engine/README.md ./packages/core_engine/
+COPY packages/core_engine/src/ ./packages/core_engine/src/
+RUN pip install --no-cache-dir -e ./packages/core_engine
+
+COPY pyproject.toml README.md ./
+COPY apps/api/ ./apps/api/
+
+RUN pip install --no-cache-dir -e ".[run]" \
+    && python -c "import airify_core_engine; from airify_core_engine.config import AppConfig; print('airify_core_engine import ok')"
+
+# Default environment (mock mode, no live calls).
+ENV AIRIFY_MODE=mock
+ENV APP_ENV=local
+ENV API_VERSION=v1
+
+EXPOSE 8000
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--app-dir", "apps/api"]

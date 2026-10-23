@@ -1,0 +1,1 @@
+"""Service layer (offline stubs)."""

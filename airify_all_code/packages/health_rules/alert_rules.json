@@ -1,0 +1,76 @@
+{
+  "schema": "airify.health_rules.alert_rules",
+  "version": "0.1.0",
+  "status": "demo_reference",
+  "not_medical": true,
+  "description": "Preventive alert rules for the Airify demo. Each rule maps a demo PM2.5 display band to preventive, non-medical guidance. Alerts are PREVENTIVE INFORMATION ONLY — they are not diagnoses, not clinical decision support, and not treatment advice.",
+  "trigger_basis": "concentration_reference_band",
+  "rules": [
+    {
+      "id": "low",
+      "when_level": "low",
+      "severity": "info",
+      "headline": "Lower estimated exposure right now.",
+      "guidance": [
+        "Estimated environmental exposure is generally lower for this activity window.",
+        "Outdoor activity is generally reasonable at this level."
+      ]
+    },
+    {
+      "id": "moderate",
+      "when_level": "moderate",
+      "severity": "notice",
+      "headline": "Some exposure expected — small planning choices may help.",
+      "guidance": [
+        "Consider shorter outdoor durations when PM2.5 is elevated.",
+        "A well-fitted mask may reduce estimated exposure during outdoor travel."
+      ]
+    },
+    {
+      "id": "high",
+      "when_level": "high",
+      "severity": "warning",
+      "headline": "Higher estimated exposure for this activity window.",
+      "guidance": [
+        "Consider limiting prolonged outdoor activity.",
+        "Indoor spaces with air filtration may reduce estimated exposure."
+      ]
+    },
+    {
+      "id": "very_high",
+      "when_level": "very_high",
+      "severity": "warning",
+      "headline": "Very high estimated environmental exposure.",
+      "guidance": [
+        "Consider avoiding prolonged outdoor activity.",
+        "Keep windows closed if indoor air is cleaner.",
+        "A well-fitted N95/KN95 mask may help if outdoor exposure is necessary."
+      ]
+    },
+    {
+      "id": "severe",
+      "when_level": "severe",
+      "severity": "high",
+      "headline": "Severe demo exposure band — reduce exposure where possible.",
+      "guidance": [
+        "Consider staying indoors with filtered air where possible.",
+        "Reduce strenuous outdoor activity that raises breathing rate.",
+        "A well-fitted N95/KN95 mask may help if going outside is necessary."
+      ]
+    }
+  ],
+  "population_modifiers": {
+    "note": "Sensitive groups may see the same rules surfaced one band earlier as a preventive trigger. This is a reference trigger, not a medical instruction.",
+    "children_0_18": "surface_one_band_earlier",
+    "pregnancy": "surface_one_band_earlier",
+    "copd": "surface_one_band_earlier",
+    "cvd": "surface_one_band_earlier",
+    "asthma": "surface_one_band_earlier",
+    "adult_general": "no_modifier"
+  },
+  "boundary": "Preventive information only. Environmental exposure estimate only. Not medical diagnosis. Not clinical decision support.",
+  "wording_rules": {
+    "avoid": ["safe", "unsafe", "guaranteed", "will get", "diagnose", "treatment", "cure"],
+    "prefer": ["estimated", "may", "consider", "reference", "preventive"]
+  }
+}

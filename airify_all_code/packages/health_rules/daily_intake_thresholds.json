@@ -1,0 +1,62 @@
+{
+  "schema": "airify.health_rules.daily_intake_thresholds",
+  "version": "0.1.0",
+  "source_criteria": "Airify PM2.5 Daily Intake Criteria v0.1",
+  "pollutant": "PM2.5",
+  "status": "demo_reference",
+  "not_medical": true,
+  "description": "Operational reference tiers for ESTIMATED INHALED PM2.5 (mass) over a day, used only to color-code and trigger preventive information in the Airify demo UI. These are NOT medical safety limits, NOT a diagnosis, and NOT a clinical dose. 'Intake' here means estimated inhaled PM2.5 mass (concentration x inhalation rate x time), not absorbed or deposited dose.",
+  "units": {
+    "concentration": "ug/m3",
+    "estimated_inhaled_pm25": "ug",
+    "add": "mg/kg/day (environmental estimate only, not a clinical dose)"
+  },
+  "concentration_reference_bands": {
+    "note": "Display bands mirror frontend/src/shared/utils/risk.ts. Operational reference only.",
+    "bands": [
+      { "level": "low",        "label": "Low",        "pm25_ugm3_lt": 15, "color": "green"  },
+      { "level": "moderate",   "label": "Moderate",   "pm25_ugm3_lt": 30, "color": "amber"  },
+      { "level": "high",       "label": "High",       "pm25_ugm3_lt": 40, "color": "orange" },
+      { "level": "very_high",  "label": "Very High",  "pm25_ugm3_lt": 50, "color": "red"    },
+      { "level": "severe",     "label": "Severe",     "pm25_ugm3_gte": 50, "color": "purple" }
+    ]
+  },
+  "population_profiles": {
+    "note": "Per task rules: children (0-18) may use ADD/HQ-based reference wording; other groups use operational reference / risk-trigger wording only. No group receives a medical guarantee of safe/unsafe.",
+    "children_0_18": {
+      "wording_mode": "add_hq_reference",
+      "description": "Children may be described using ADD/HQ-based REFERENCE wording because intake per body weight is higher. Still preventive, still not a diagnosis.",
+      "sensitivity_multiplier_reference": 1.5,
+      "guidance_tone": "protective, calm, explicitly non-medical"
+    },
+    "pregnancy": {
+      "wording_mode": "operational_reference_trigger",
+      "guidance_tone": "protective, calm, non-medical",
+      "note": "Use operational reference / risk-trigger wording. Do not state pregnancy outcomes."
+    },
+    "copd": {
+      "wording_mode": "operational_reference_trigger",
+      "guidance_tone": "protective, calm, non-medical",
+      "note": "Respiratory-sensitive reference trigger. No diagnosis, no treatment advice."
+    },
+    "cvd": {
+      "wording_mode": "operational_reference_trigger",
+      "guidance_tone": "protective, calm, non-medical",
+      "note": "Cardiovascular-sensitive reference trigger. No diagnosis, no treatment advice."
+    },
+    "asthma": {
+      "wording_mode": "operational_reference_trigger",
+      "guidance_tone": "protective, calm, non-medical",
+      "note": "Respiratory-sensitive reference trigger. No diagnosis, no treatment advice."
+    },
+    "adult_general": {
+      "wording_mode": "operational_reference_trigger",
+      "guidance_tone": "practical, calm, non-medical"
+    }
+  },
+  "boundary": "Environmental exposure estimate only. Not medical diagnosis. Not clinical decision support. Preventive information only.",
+  "wording_rules": {
+    "avoid": ["safe", "unsafe", "guaranteed", "will get", "diagnose", "diagnosis", "treatment", "cure", "risk of cancer", "disease prediction"],
+    "prefer": ["estimated", "may", "consider", "environmental exposure", "reference", "preventive"]
+  }
+}

@@ -1,0 +1,35 @@
+# Airify PI-ML Lite — EXAMPLE training config (placeholder, not runnable).
+# No secrets. No real data paths. Values are illustrative only.
+# Paths are read from environment variables in real runs (see .env.example).
+
+model:
+  name: airify-piml-lite
+  version: v0.1            # demo placeholder; not trained, not validated
+  type: physics_informed  # advection/diffusion constrained; NOT a black box
+
+data:
+  # Directories are provided via env vars at runtime; do not hardcode secrets.
+  training_data_dir: ${TRAINING_DATA_DIR}   # historical PM2.5 + weather + station metadata
+  features:
+    pm25: [pm25_ugm3]
+    weather: [temp_c, rh_pct, wind_speed_ms, wind_dir_deg]
+    station_meta: [lat, lon, elevation_m, land_use]
+
+training:
+  holdout: station        # station | time | random
+  seed: 42
+  epochs: 0               # 0 = not implemented
+  status: not_implemented
+
+validation:
+  # A real run MUST emit these before any accuracy claim.
+  required_metrics: [mae, rmse, bias, p90_error, station_holdout_results]
+  output_dir: ${VALIDATION_OUTPUT_DIR}
+
+registry:
+  output_dir: ${MODEL_ARTIFACT_DIR}
+
+safety:
+  claim_accuracy_without_validation: false
+  feed_add_before_validation: false
+  boundary: "Environmental exposure estimate only. Not medical diagnosis."

@@ -1,0 +1,56 @@
+{
+  "criteria_version": "pm25_daily_intake_criteria_v0_1",
+  "pollutant": "PM2.5",
+  "user_group": "adult_general",
+  "daily_intake_limit": 225,
+  "unit": "ug/day",
+  "limit_type": "OPERATIONAL_REFERENCE",
+  "confidence_level": "demo",
+  "evidence_source": ["Airify_PM25_Daily_Intake_Criteria_v0_1"],
+  "source_pdf_status": "demo_assumption_from_airify_pm25_daily_intake_criteria_v0_1_not_clinically_validated",
+  "safety_note": "Environmental exposure awareness reference only. Not medical diagnosis.",
+  "status": "demo",
+  "not_medical": true,
+  "meaning_of_intake": "Estimated INHALED PM2.5 mass over a day (concentration x inhalation rate x time). This is NOT an absorbed or deposited dose, NOT a clinical dose, and NOT a medical safety limit.",
+  "derivation_note": "Demo OPERATIONAL_REFERENCE only. Approximated from the WHO 2021 24-hour PM2.5 guideline (~15 ug/m3) multiplied by a reference daily ventilation of ~15 m3/day (15 x 15 = 225 ug/day). Used solely to give the Airify demo a relatable daily budget bar. It is NOT a validated safe intake threshold and must not be presented as one.",
+  "budget_bands": [
+    { "level": "low",       "min_percent": 0,   "max_percent": 50,   "label": "Low",       "color": "green"  },
+    { "level": "moderate",  "min_percent": 50,  "max_percent": 80,   "label": "Moderate",  "color": "amber"  },
+    { "level": "high",      "min_percent": 80,  "max_percent": 100,  "label": "High",       "color": "orange" },
+    { "level": "very_high", "min_percent": 100, "max_percent": 150,  "label": "Very High",  "color": "red"    },
+    { "level": "severe",    "min_percent": 150, "max_percent": null, "label": "Severe",     "color": "purple" }
+  ],
+  "user_groups": [
+    {
+      "user_group": "adult_general",
+      "daily_intake_limit": 225,
+      "limit_type": "OPERATIONAL_REFERENCE",
+      "wording_mode": "operational_reference_trigger",
+      "note": "General adult operational reference. Practical, calm, non-medical wording."
+    },
+    {
+      "user_group": "children_0_18",
+      "daily_intake_limit": 150,
+      "limit_type": "OPERATIONAL_REFERENCE",
+      "wording_mode": "add_hq_reference",
+      "note": "Lower reference reflects higher inhaled intake per body weight. Preventive reference wording only, not a diagnosis."
+    },
+    {
+      "user_group": "sensitive_group",
+      "daily_intake_limit": 180,
+      "limit_type": "OPERATIONAL_REFERENCE",
+      "wording_mode": "operational_reference_trigger",
+      "note": "Represents pregnancy / COPD / CVD / asthma reference triggers. No diagnosis, no treatment advice, no outcome claims."
+    }
+  ],
+  "assumptions": {
+    "reference_daily_ventilation_m3": 15,
+    "indoor_outdoor_ratio_demo": 0.5,
+    "resting_inhalation_rate_m3_hr": 0.5,
+    "note": "All assumptions are demo defaults for a relatable budget, not personalized clinical parameters."
+  },
+  "wording_rules": {
+    "avoid": ["safe", "unsafe", "guaranteed", "will get", "diagnose", "diagnosis", "treatment", "cure", "cancer", "disease prediction"],
+    "prefer": ["estimated", "may", "consider", "environmental exposure", "reference", "preventive", "budget"]
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "schema": "airify.health_rules.evidence_sources",
+  "version": "0.1.0",
+  "status": "demo_reference",
+  "not_medical": true,
+  "description": "External reference sources consulted when authoring the Airify PM2.5 Daily Intake Criteria v0.1 wording. Airify does NOT reproduce or endorse these as medical advice; they are cited to keep the operational reference tiers transparent and revisable. No source here has been re-validated by Airify, and no Airify model accuracy is implied.",
+  "sources": [
+    {
+      "id": "who_aqg_2021_pm25",
+      "name": "WHO Global Air Quality Guidelines 2021 — PM2.5",
+      "type": "guideline_reference",
+      "used_for": "General direction for concentration reference bands (annual/24h). Reference only.",
+      "note": "Reference for operational tiers, not a medical safety limit inside Airify."
+    },
+    {
+      "id": "th_pcd_air4thai",
+      "name": "Thailand Pollution Control Department / Air4Thai PM2.5 reporting",
+      "type": "national_reference",
+      "used_for": "Local PM2.5 reporting context (Thailand). Provider role: PM2.5 source (future live integration, not connected in demo).",
+      "note": "Not integrated in the current demo; listed for provenance."
+    },
+    {
+      "id": "us_epa_exposure_factors",
+      "name": "US EPA Exposure Factors Handbook — inhalation rate references",
+      "type": "methodology_reference",
+      "used_for": "Inhalation-rate direction for the ADD / estimated-inhaled-PM2.5 formula (environmental estimate only).",
+      "note": "Used for the exposure-layer estimate, not for any health-outcome claim."
+    }
+  ],
+  "validation_status": "Not independently validated by Airify. No MAE/RMSE or clinical validation exists.",
+  "boundary": "Environmental exposure estimate only. Not medical diagnosis. Not clinical decision support."
+}

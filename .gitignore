@@ -1,0 +1,64 @@
+# Airify .gitignore
+# SAFETY: real secrets must never be committed. .env is ignored; only .env.example is tracked.
+
+# Secrets / environment
+.env
+.env.*
+!.env.example
+# Keys / certificates / credentials (never commit real ones)
+*.pem
+*.key
+*.crt
+*.pfx
+*.p12
+credentials.json
+id_rsa
+id_rsa.*
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# OS
+.DS_Store
+
+# Local data (event storage, analytics)
+airify_all_code/data/local/
+*.sqlite
+*.db
+*.jsonl
+
+# Editors
+.idea/
+.vscode/
+
+# Local agent / tooling caches (machine-specific, never source)
+.claude/
+.playwright-cli/
+
+# Node.js / Frontend build
+node_modules/
+airify_all_code/apps/web/dist/
+airify_all_code/apps/web/.vite/
+
+airify_all_code/docker-compose.local.yml
+.kiro/
+
+# Windows / private files
+Thumbs.db
+*.log
+*.bak
+.DS_Store

@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "airify-core-engine"
+version = "2.0.0+com2.phase1"
+description = "Airify hyperlocal PM2.5 Core Engine (COM2 Phase 1, isolated runtime). Environmental estimate only — not medical diagnosis."
+requires-python = ">=3.11"
+# Minimal runtime dependencies only. NO pandas / xgboost / matplotlib /
+# streamlit / requests — those are offline/provider concerns, not core runtime.
+dependencies = [
+    "numpy>=1.26",
+    "pyproj>=3.6",
+    "tzdata>=2025.2; platform_system == 'Windows'",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=7.4"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+# Make `airify_core_engine` importable from src/ without an editable install
+# and without sys.path hacks in test code.
+pythonpath = ["src"]
+testpaths = ["tests"]

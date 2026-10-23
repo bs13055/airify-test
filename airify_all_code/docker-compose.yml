@@ -1,0 +1,45 @@
+# Airify — PORTABLE / target deployment compose.
+#
+# Deployment-oriented compose for the airify_all_code layout. Build context is this
+# directory (airify_all_code/), which now holds the migrated apps/api and apps/web.
+#
+#   docker compose -f airify_all_code/docker-compose.yml build
+#   docker compose -f airify_all_code/docker-compose.yml up -d
+#
+# The local-dev stack (api + postgres + redis + minio) is docker-compose.local.yml.
+# This file adds a web (Nginx) service in front of the API. Mock mode by default; no secrets.
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    environment:
+      - AIRIFY_MODE=${AIRIFY_MODE:-mock}
+      - APP_ENV=${APP_ENV:-production}
+      - API_VERSION=${API_VERSION:-v1}
+      # CORS + base URLs come from the environment; leave blank for same-origin proxy.
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-}
+      - PUBLIC_BASE_URL=${PUBLIC_BASE_URL:-}
+      # No real API keys. Mock mode does not require them.
+      - OPENWEATHER_ENABLED=${OPENWEATHER_ENABLED:-false}
+    expose:
+      - "8000"
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: infra/docker/web.Dockerfile
+      args:
+        # Same-origin: web proxies /v1 to api, so API base can stay empty.
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-}
+        VITE_PUBLIC_BASE_URL: ${VITE_PUBLIC_BASE_URL:-}
+        VITE_HEALTH_APP_URL: ${VITE_HEALTH_APP_URL:-}
+        VITE_APP_STORE_URL: ${VITE_APP_STORE_URL:-}
+        VITE_PLAY_STORE_URL: ${VITE_PLAY_STORE_URL:-}
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+    restart: unless-stopped
