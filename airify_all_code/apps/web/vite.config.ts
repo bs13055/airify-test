@@ -3,8 +3,8 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig(({ mode }) => ({
   plugins: [react()],
-  // Keep local / FastAPI builds at root; use /Airify/ for GitHub Pages only.
-  base: mode === 'github-pages' ? '/Airify/' : '/',
+  // Keep local / FastAPI builds at root; use /airify-test/ for GitHub Pages only.
+  base: mode === 'github-pages' ? '/airify-test/' : '/',
   server: {
     port: 5173,
     proxy: {

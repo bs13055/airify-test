@@ -8,7 +8,7 @@
 
 ```powershell
 git init -b main
-git remote add origin https://github.com/bs13055/Airify.git
+git remote add origin https://github.com/bs13055/airify-test.git
 git add .
 git status --short
 # ตรวจสอบรายชื่อไฟล์ก่อนเผยแพร่
@@ -17,9 +17,9 @@ git commit -m "Import Airify source and GitHub Pages workflow"
 git push -u origin main
 ```
 
-4. ไปที่ https://github.com/bs13055/Airify/settings/pages เลือก **Build and deployment > Source > GitHub Actions**
-5. ดูผลที่ https://github.com/bs13055/Airify/actions
-6. หาก Deployment สำเร็จ เปิด https://bs13055.github.io/Airify/#/developers
+4. ไปที่ https://github.com/bs13055/airify-test/settings/pages เลือก **Build and deployment > Source > GitHub Actions**
+5. ดูผลที่ https://github.com/bs13055/airify-test/actions
+6. หาก Deployment สำเร็จ เปิด https://bs13055.github.io/airify-test/#/developers
 
 ## ข้อจำกัด API
 
