@@ -34,6 +34,8 @@ jobs:
           cache-dependency-path: airify_all_code/apps/web/package-lock.json
       - name: Install frontend packages
         run: npm ci
+      - name: Check assignment pages
+        run: node scripts/check-gp1.cjs
       - name: Build GitHub Pages site
         run: npm run build -- --mode github-pages
         env:

@@ -1,0 +1,57 @@
+'use strict';
+// Desktop composition for the shared mobile/explorer state. No independent data store.
+window.AirifyDesktop = (() => {
+  const sections = html => {
+    const template=document.createElement('template');template.innerHTML=html;
+    return [...template.content.children].filter(node=>node.matches('section'));
+  };
+  function render(c) {
+    const {t,icon,esc,num,heading,textBtn,selected,data,mode,prefs,historyDays}=c;
+    const tab=c.tab, readings=c.dailyReadings(), records=c.records();
+    const average=readings.length?readings.reduce((sum,row)=>sum+row.pm,0)/readings.length:null;
+    const navItems=[['today','sun','วันนี้','Today'],['places','pin','พื้นที่','Places'],['history','chart','ประวัติ','History'],['profile','user','บัญชี','Account']];
+    const header=`<header class="d-header"><a class="m-brand" href="index.html">${icon('wind')}<span>Airify Health</span></a><nav class="d-nav" aria-label="${t('เมนูหลัก','Main navigation')}">${navItems.map(([id,ico,th,en])=>`<button type="button" data-m-tab="${id}" ${tab===id?'aria-current="page"':''}>${icon(ico)}<span>${t(th,en)}</span></button>`).join('')}</nav></header>`;
+    const readingFor=p=>c.mapRows.find(row=>Math.abs(row.lat-p.lat)<.001&&Math.abs(row.lon-p.lon)<.001)?.pm;
+    const cityButton=(p,i)=>`<button class="d-city ${Math.abs(p.lat-selected.lat)<.001&&Math.abs(p.lon-selected.lon)<.001?'active':''}" data-m-city="${i}"><span class="d-city-icon">${icon('pin')}</span><span class="d-city-name"><b>${esc(p.name)}</b><small>${esc(p.sub)}</small></span><span class="d-reading-pill">${num(readingFor(p),1)} <small>µg/m³</small></span>${icon('right')}</button>`;
+    const rangeButtons=`<div class="d-range-buttons">${[7,30].map(days=>`<button data-m-range="${days}" class="${historyDays===days?'active':''}" aria-pressed="${historyDays===days}">${icon(days===7?'calendar':'clock')}<span>${t(days+' วันที่ผ่านมา','Last '+days+' days')}</span>${icon('right')}</button>`).join('')}</div>`;
+    const miniMetric=(ico,label,value,unit='')=>`<div class="d-metric">${icon(ico)}<span><small>${label}</small><strong>${value} ${unit?`<em>${unit}</em>`:''}</strong></span></div>`;
+    const locationSidebar=`<aside class="d-sidebar d-location-sidebar m-card">${heading('pin',t('ค้นหาพื้นที่','Find an area'),t('ค้นหาจังหวัด อำเภอ หรือตำแหน่งใกล้คุณ','Search a province, district or nearby place'))}<div class="d-search-wrap"><label for="d-search" class="m-visually-hidden">${t('ค้นหาพื้นที่ในประเทศไทย','Search Thailand')}</label>${icon('search')}<input type="search" id="d-search" placeholder="${t('ค้นหาสถานที่ เช่น นนทบุรี, เชียงใหม่…','Search a place in Thailand…')}" autocomplete="off"><div class="m-sheet-results d-search-results" id="d-search-results" hidden></div></div><div class="d-sidebar-section"><h2>${icon('pin')}${t('ตำแหน่งของคุณ','Your location')}</h2><button class="d-current-location" data-m-action="locate">${icon('locate')}${t('ใช้ตำแหน่งปัจจุบัน','Use current location')}</button></div><div class="d-sidebar-section"><div class="d-sidebar-title"><h2>${t('สถานที่ยอดนิยม','Popular areas')}</h2>${textBtn(t('ดูทั้งหมด','See all'),'search')}</div><div class="d-city-list">${c.cities.slice(0,5).map(cityButton).join('')}</div></div><p class="d-sidebar-note">${t('ค่าฝุ่นจากแบบจำลองตามพิกัด ไม่ใช่การวัดด้วยอุปกรณ์ของคุณ','Model estimates at each coordinate, not measurements from your device.')}</p></aside>`;
+    const historySidebar=`<aside class="d-sidebar m-card">${heading('calendar',t('ช่วงเวลาที่แสดงข้อมูล','History period'),t('ดูข้อมูลคุณภาพอากาศและการรับฝุ่นของคุณ','Air quality and saved exposure history'))}${rangeButtons}<div class="d-sidebar-section"><h2>${t('สรุปข้อมูลในช่วง','Summary over')} ${historyDays} ${t('วันที่ผ่านมา','days')}</h2>${miniMetric('chart',t('ค่าเฉลี่ย PM2.5','Average PM2.5'),num(average,1),'µg/m³')}${miniMetric('trend',t('เทียบกับเมื่อวาน','Compared with yesterday'),c.comparisonText())}${miniMetric('leaf',t('AQI (US) ปัจจุบัน','Current US AQI'),data?num(data.aqi):'—')}${miniMetric('walk',t('กิจกรรมที่บันทึกในช่วงนี้','Saved scenarios in this period'),num(records.length),t('กิจกรรม','activities'))}</div></aside>`;
+    const situation=(historical=false)=>`<section class="m-card d-situation">${heading('shield',t(historical?'สรุปสถานการณ์ในช่วงนี้':'สรุปสถานการณ์',historical?'Period overview':'Current overview'),historical?t('ข้อมูลตามช่วงเวลาที่เลือก','For the selected period'):t('ณ ขณะนี้','At the selected area'))}<dl><div><dt>${t(historical?'ค่าเฉลี่ย PM2.5':'ค่า PM2.5',historical?'Average PM2.5':'PM2.5')}</dt><dd>${num(historical?average:data?.pm,1)} <small>µg/m³</small></dd></div><div><dt>AQI (US)${historical?' · '+t('ปัจจุบัน','current'):''}</dt><dd>${data?num(data.aqi):'—'}</dd></div><div><dt>${t('เทียบกับเมื่อวาน','vs. yesterday')}</dt><dd>${c.comparisonText()}</dd></div><div><dt>${t('แหล่งข้อมูล','Data source')}</dt><dd>Open-Meteo / CAMS</dd></div></dl><p>${c.readingTime()}</p></section>`;
+    const advice=`<section class="m-card d-guidance">${heading('bulb',t('คำแนะนำโดยรวม','Planning guidance'))}<div class="d-advice-box"><p>${t('ติดตามค่าฝุ่นและประกาศในพื้นที่ก่อนทำกิจกรรม ลองปรับระยะเวลาและความหนักของกิจกรรมเพื่อเปรียบเทียบค่าประเมินการรับฝุ่น','Check local air readings and advisories. Compare activity durations and intensity using the scenario estimator.')}</p><button class="m-text-btn" data-m-action="insights">${t('อ่านเพิ่มเติม','Read more')}${icon('right')}</button></div></section>`;
+    const healthGuide=`<section class="m-card d-health-guide">${heading('heart',t('ดูแลสุขภาพ','Everyday guidance'))}${[['shield','ติดตามประกาศจากหน่วยงานในพื้นที่','Follow local public advisories'],['clock','เปรียบเทียบช่วงเวลาก่อนทำกิจกรรม','Compare times before activities'],['walk','ปรับเวลาและความหนักของกิจกรรม','Adjust duration and intensity']].map(([ico,th,en])=>`<button data-m-action="insights">${icon(ico)}<span>${t(th,en)}</span>${icon('right')}</button>`).join('')}<div class="d-data-box">${icon('database')}<p><b>${t('ข้อมูลจาก Open-Meteo / CAMS','Open-Meteo / CAMS data')}</b>${t('ค่าฝุ่นเชิงพื้นที่และพยากรณ์จากแบบจำลอง พร้อมเวลาอ้างอิง','Spatial model readings and forecasts with reference times.')}</p></div></section>`;
+    const location=`<div class="d-location-bar">${c.locationRow()}<button class="m-locate d-share" data-m-action="desktop-share">${icon('share')}${t('แชร์','Share')}</button></div>`;
+    const legend=`<div class="d-map-legend"><b>PM2.5</b>${[['#4ec34c','0–20'],['#ffb300','21–35'],['#ff7f13','36–50'],['#f24a40','>50']].map(([color,label])=>`<span><i style="background:${color}"></i>${label}</span>`).join('')}<small>µg/m³</small></div>`;
+    const mapCard=()=>{
+      const part=sections(c.places())[0];part.classList.add('d-map-card');
+      const wrap=part.querySelector('.m-map-wrap');part.querySelector('.m-pin-editor')?.remove();
+      const controls=document.createElement('div');controls.className='d-map-controls';controls.innerHTML=`<div class="d-map-types" aria-label="${t('รูปแบบแผนที่','Basemap style')}"><button data-d-map="street" aria-pressed="${c.mapStyle==='street'}">${t('แผนที่','Map')}</button><button data-d-map="satellite" aria-pressed="${c.mapStyle==='satellite'}">${t('ดาวเทียม','Satellite')}</button></div><button class="d-map-expand" data-m-action="expand-map" aria-label="${t(c.expanded?'ย่อแผนที่':'ขยายแผนที่',c.expanded?'Collapse map':'Expand map')}">${icon(c.expanded?'close':'expand')}</button>`;
+      wrap.prepend(controls);wrap.insertAdjacentHTML('beforeend',legend);
+      return part.outerHTML;
+    };
+    const insight=()=>sections(c.historyView()).at(-1).outerHTML;
+    const chart=()=>`<section class="m-card d-daily-chart">${heading('chart',t('แนวโน้ม PM2.5 ในพื้นที่','PM2.5 trend in the area'),'',textBtn(t('ดูประวัติ','History'),'history'))}${c.bars(true,700)}</section>`;
+    let left=tab==='history'?historySidebar:locationSidebar,main='',right='';
+    if(tab==='today'){
+      main=`${location}<div class="d-today-grid"><div class="d-today-hero">${c.hero()}</div><div class="d-today-map">${mapCard()}</div><div class="d-today-estimator">${c.estimator()}</div><div class="d-today-activities">${c.activities()}</div><div class="d-wide">${chart()}</div><div class="d-wide">${c.sevenDayCard()}</div></div>`;
+      right=situation()+advice+healthGuide;
+    }else if(tab==='places'){
+      const parts=sections(c.places());const pinEditor=parts[0].querySelector('.m-pin-editor');if(pinEditor){pinEditor.classList.add('d-pin-editor');parts[1].querySelector('.m-add-pin')?.insertAdjacentElement('afterend',pinEditor);}
+      const nearby=c.cities.map((p,i)=>({...p,index:i,distance:(p.lat-selected.lat)**2+(p.lon-selected.lon)**2})).filter(p=>p.distance>.000001).sort((a,b)=>a.distance-b.distance).slice(0,5);
+      const nearbyCard=`<section class="m-card d-nearby">${heading('chart',t('สำรวจพื้นที่ใกล้เคียง','Explore nearby areas'),'',textBtn(t('ดูทั้งหมด','See all'),'search'))}${nearby.map(p=>cityButton(p,p.index)).join('')}</section>`;
+      main=`${location}${mapCard()}<div class="d-place-summary"><div>${c.hero()}</div><div>${parts[2].outerHTML.replace('</section>',`<div class="d-local-metrics">${miniMetric('clock',t('ค่าเฉลี่ย '+historyDays+' วัน',historyDays+'-day average'),num(average,1),'µg/m³')}${miniMetric('chart',t('เทียบกับเมื่อวาน','vs. yesterday'),c.comparisonText())}</div></section>`)}</div></div>${chart()}`;
+      right=parts[1].outerHTML+nearbyCard+insight();
+    }else if(tab==='history'){
+      const parts=sections(c.historyView(700));
+      main=`<h1 class="m-visually-hidden">${t('ประวัติ','History')}</h1>${parts[0].outerHTML}${parts[1].outerHTML}`;
+      right=parts[2].outerHTML+advice+situation(true);
+    }else{
+      const parts=sections(c.profile());
+      main=`<div class="d-profile-heading"><h1>${t('บัญชี','Account')}</h1><p>${t('จัดการข้อมูลบัญชีและการตั้งค่าการใช้งานของคุณ','Manage your local profile and preferences')}</p></div>${parts.map(p=>p.outerHTML).join('')}`;
+      right=`<section class="m-card d-account-status">${heading('shield',t('สถานะบัญชี','Profile status'))}<dl><div><dt>${t('สถานะ','Status')}</dt><dd>${t('บัญชีในเบราว์เซอร์','Browser profile')}</dd></div><div><dt>${t('ชื่อที่แสดง','Display name')}</dt><dd>${esc(prefs.guest?t('ผู้เยี่ยมชม','Guest'):prefs.name)}</dd></div><div><dt>${t('การจัดเก็บข้อมูล','Storage')}</dt><dd>${t('บนอุปกรณ์นี้','This device')}</dd></div><div><dt>${t('เวอร์ชันแอป','App version')}</dt><dd>1.0.0</dd></div></dl></section><section class="m-card d-privacy">${heading('bulb',t('ความเป็นส่วนตัวของคุณ','Your privacy'))}<p>${t('ข้อมูลโปรไฟล์ หมุด และสถานการณ์ที่บันทึกอยู่ในเบราว์เซอร์นี้ คุณจัดการข้อมูลและการตั้งค่าได้ด้วยตนเอง','Your profile, pins and saved scenarios stay in this browser. You control these records and settings.')}</p>${textBtn(t('ดูรายละเอียด','Learn more'),'privacy')}</section>`;
+    }
+    const banner=mode==='error'?`<div class="m-banner" role="status">${t('โหลดข้อมูล Open-Meteo ไม่สำเร็จ กรุณาลองใหม่','Open-Meteo is unavailable. Please retry.')}<button data-m-source="live">${t('ลองใหม่','Retry')}</button></div>`:'';
+    return `${header}${banner}<div class="d-layout d-page-${tab}">${left}<main class="d-main" id="m-content">${main}${c.sourceNote()}</main><aside class="d-right" aria-label="${t('ข้อมูลประกอบ','Supporting information')}">${right}</aside></div><dialog class="m-sheet" id="m-sheet"></dialog>`;
+  }
+  return {render};
+})();
