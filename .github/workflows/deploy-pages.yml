@@ -40,6 +40,10 @@ jobs:
         run: npm run build -- --mode github-pages
         env:
           VITE_API_BASE_URL: ${{ vars.AIRIFY_API_BASE_URL }}
+      - name: Prepare and check assignment entry point
+        run: |
+          node scripts/prepare-gp1-pages.cjs
+          node scripts/check-gp1-pages.cjs
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload static site

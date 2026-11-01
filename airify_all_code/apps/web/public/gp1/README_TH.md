@@ -63,4 +63,4 @@ Leaflet and OpenStreetMap are loaded from their public services and are credited
 - รัน `node scripts/check-gp1.cjs` จากโฟลเดอร์เว็บ เพื่อตรวจไฟล์ ลิงก์ภายใน และการจัดการข้อผิดพลาดก่อน build; GitHub Actions รันชุดตรวจนี้ก่อนเผยแพร่ด้วย
 - ตรวจเบราว์เซอร์ที่ขนาด 390, 820 และ 1440 พิกเซลแล้ว การทดสอบขนาดจอไม่ใช่การทดสอบทุกอุปกรณ์จริง
 - งานนี้เป็น static frontend: ไม่มีระบบชำระเงิน บัญชีออนไลน์ หรือออก API Key
-- เมื่อ workflow สำเร็จ หน้าโครงงานอยู่ที่ `https://bs13055.github.io/Airify/gp1/` โดยหน้าเดิมที่ราก repository ยังคงอยู่
+- เมื่อ workflow สำเร็จ ลิงก์หลัก `https://bs13055.github.io/Airify/` เปิดหน้าโครงงานที่ `/Airify/gp1/` โดยแอป React เดิมยังเปิดได้ที่ `/Airify/platform.html`
